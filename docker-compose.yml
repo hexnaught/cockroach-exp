@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+    roach1:
+        container_name: roach1
+        image: cockroachdb/cockroach:v21.1.1
+        volumes:
+            - ./data/roach1:/cockroach/cockroach-data
+        command: start --insecure --join=roach1,roach2
+        ports:
+            - "26257:26257"
+            - "9988:8080"
+        networks:
+            roachnet:
+                aliases:
+                    - roach1
+    roach2:
+        container_name: roach2
+        image: cockroachdb/cockroach:v21.1.1
+        volumes:
+            - ./data/roach2:/cockroach/cockroach-data
+        command: start --insecure --join=roach1,roach2
+        networks:
+            roachnet:
+                aliases:
+                    - roach2
+
+networks:
+    roachnet:
+        driver: bridge
